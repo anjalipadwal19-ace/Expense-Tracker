@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="ET.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar disabled">
+      <div class="profile">
+        <div class="avatar" id="avatar" onclick="uploadAvatar()"></div>
+        <input id="userName" placeholder="Enter name" onkeydown="saveProfile(event)">
+        <button id="logoutBtn" onclick="logout()" class="hidden">Logout</button>
+        <input type="file" id="avatarInput" accept="image/*" hidden>
+
+      </div>
+
+      <ul>
+        <li onclick="showSection('home')">Home</li>
+        <li onclick="showSection('income')">Income</li>
+        <li onclick="showSection('expense')">Expense</li>
+        <li onclick="showSection('overview')">Overview</li>
+      </ul>
+    </aside>
+
+    <main id="mainApp" class="hidden">
+      <!-- ================= HOME ================= -->
+      <section id="home" class="section active">
+
+        <div class="cards">
+          <div class="card income">Income<br>₹<span id="homeIncome">0</span></div>
+          <div class="card expense">Expense<br>₹<span id="homeExpense">0</span></div>
+          <div class="card balance">Balance<br>₹<span id="homeBalance">0</span></div>
+        </div>
+
+        <div class="home-content">
+          <!-- Transactions -->
+          <div class="transactions">
+            <h3>Recent Transactions</h3>
+            <table>
+              <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+              </tr>
+              <tbody id="recentList"></tbody>
+            </table>
+          </div>
+
+          <!-- Pie Chart -->
+          <div class="chart-box">
+            <h3>Expense Chart</h3>
+            <canvas id="expenseChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= INCOME ================= -->
+      <section id="income" class="section">
+        <h2>Add Income</h2>
+
+        <div class="io-layout">
+
+          <!-- LEFT: Add Income -->
+          <div class="io-left">
+            <form onsubmit="addTransaction(event,'income')">
+              <input id="iTitle" placeholder="Title" required>
+              <input id="iDesc" placeholder="Description">
+              <input id="iAmount" type="number" placeholder="Amount" required>
+              <select id="iCategory">
+                <option>Salary</option>
+                <option>Business</option>
+                <option>Bonus</option>
+                <option>Investment</option>
+                <option>Other</option>
+              </select>
+              <input id="iDate" type="date" required>
+              <button>Add Income</button>
+            </form>
+          </div>
+
+          <!-- RIGHT: Income List -->
+          <div class="io-right">
+            <h3>Income Transactions</h3>
+            <table>
+              <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Actions</th>
+              </tr>
+              <tbody id="incomeList"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BOTTOM buttons -->
+        <div class="io-buttons io-bottom">
+          <button onclick="exportData('income')">Export Income</button>
+          <input type="file" accept=".json" onchange="importData(event,'income')">
+        </div>
+      </section>
+
+
+      <!-- ================= EXPENSE ================= -->
+      <section id="expense" class="section">
+        <h2>Add Expense</h2>
+
+        <div class="io-layout">
+
+          <!-- LEFT: Add Expense -->
+          <div class="io-left">
+            <form onsubmit="addTransaction(event,'expense')">
+              <input id="eTitle" placeholder="Title" required>
+              <input id="eDesc" placeholder="Description">
+              <input id="eAmount" type="number" placeholder="Amount" required>
+              <select id="eCategory">
+                <option>Food</option>
+                <option>Transport</option>
+                <option>Shopping</option>
+                <option>Entertainment</option>
+                <option>Bills</option>
+                <option>Others</option>
+              </select>
+              <input id="eDate" type="date" required>
+              <button>Add Expense</button>
+            </form>
+          </div>
+
+          <!-- RIGHT: Expense List -->
+          <div class="io-right">
+            <h3>Expense Transactions</h3>
+            <table>
+              <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Actions</th>
+              </tr>
+              <tbody id="expenseList"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BOTTOM buttons -->
+        <div class="io-buttons io-bottom">
+          <button onclick="exportData('expense')">Export Expense</button>
+          <input type="file" accept=".json" onchange="importData(event,'expense')">
+        </div>
+      </section>
+
+
+      <!-- ================= OVERVIEW ================= -->
+      <section id="overview" class="section">
+        <h2>Overview</h2>
+        <!-- Totals -->
+        <div class="cards">
+          <div class="card income">Total Income<br>₹<span id="tIncome">0</span></div>
+          <div class="card expense">Total Expense<br>₹<span id="tExpense">0</span></div>
+          <div class="card balance">Total Balance<br>₹<span id="tBalance">0</span></div>
+        </div>
+
+        <div class="io-layout">
+          <div class="transactions">
+            <div class="io-left">
+              <!-- Monthly Table -->
+              <div>
+                <h3>Monthly Report</h3>
+                <table>
+                  <tr>
+                    <th>Month</th>
+                    <th>Income</th>
+                    <th>Expense</th>
+                  </tr>
+                  <tbody id="monthlyTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- Line Chart -->
+          <div class="io-right">
+            <div class="chart-box">
+              <div>
+                <h3>Monthly Trend</h3>
+                <canvas id="lineChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script src="ET.js"></script>
+</body>
+
+</html>
